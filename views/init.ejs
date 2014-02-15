@@ -3,9 +3,118 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" type="text/css" href="/bower/bootstrap/dist/css/bootstrap.min.css" >
+    <script type="text/javascript" src="/bower/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/bower/bootstrap/dist/js/bootstrap.min.js"></script>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <h1>Welcome to <%= title %></h1>
+    <p><%= title %> Debugger</p>
+    <div class="input-group">
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+        <ul id="btnlist"class="dropdown-menu">
+          <li id="say"><a href="#">Say</a></li>
+          <li id="add"><a href="#">Add RSS source</a></li>
+          <li id="remove"><a href="#">Remove RSS source</a></li>
+          <li class="divider"></li>
+          <li id="list"><a href="#">Fetch RSS Source list <span id="listnum"class="badge"></span></a></li>
+          <li><a href="#">Fetch RSS Data</a></li>
+        </ul>
+      </div><!-- /btn-group -->
+      <form id="form">
+        <input name="word" type="text" class="form-control">
+      </form>
+    </div>
+    <ul id="rssList" class="list-group">
+    </ul>
+    <script>
+    (function() {
+
+      $.get('fetchList', function(data) {
+        $("#listnum").text(data.length);
+      });
+
+      var $btn = $('#btnlist');
+
+      $btn.on( 'click', '#say', function() {
+        console.log('say');
+        var word = $( "#form [name=word]" ).val();
+
+        _send({
+          type:"POST",
+          url:'/sendSay',
+          data: {word: word}
+        });
+
+      });
+
+      $btn.on('click', '#add', function() {
+        var url = $( "#form [name=word]" ).val();
+        console.log('add');
+
+        _send({
+          type:"GET",
+          url:'/addRss',
+          data: {url: url}
+        });
+
+      });
+
+      $btn.on('click', '#remove', function() {
+        var url = $( "#form [name=word]" ).val();
+        console.log('remove');
+
+        _send({
+          type:"GET",
+          url:'/removeRss',
+          data: {url: url}
+        });
+      });
+
+      $btn.on('click', '#list', function() {
+        console.log('fetchlist');
+        _send({
+          type:"GET",
+          url:"/fetchList",
+          callback: function(data) {
+            for( var i = 0; i < data.length; i++) {
+
+              $('#rssList').append('<li class="list-group-item">' + data[i] +'</li>').show();
+            }
+
+            $('#rssList').append('<a href="#" class="list-group-item active">Close</a>');
+
+            console.log(data);
+          }
+        });
+
+      });
+
+      $('#rssList').on('click', '.list-group-item', function() {
+        $('#rssList').hide('slow').html('');
+      });
+
+      var _send = function(obj) {
+        $.ajax({
+          type: obj.type,
+          url: obj.url,
+          data: obj.data,
+        }).done(function( data ) {
+
+          if ( obj.callback ) {
+            obj.callback(data);
+          }
+          console.log( data );
+
+        }).fail(function() {
+
+          console.log( 'error' );
+        });
+      };
+
+    })();
+    </script>
+    
   </body>
 </html>
