@@ -38,19 +38,22 @@ var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function (socket) {
 
-  //socket.on('server', function (data) {
+  socket.on('test', function (data) {
     socket.emit('test', "zenbu tamefusa no sei da");
-  //});
+  });
+
+  socket.emit('test', "first emit");
+
 });
 
 /*app.get('/', routes.index);
 app.get('/users', user.list);
 
 // ulsayメイン
-app.get('/ulsay', )
+app.get('/ulsay', ulsay.init);
 
 // rss情報の取得
-app.get('/fetchRss', );
+app.get('/fetchRss', ulsay.fetchRss);
 
 // ローマ字変換したデータをwebsoketで送信
 app.get('/sendSay',  function() {
