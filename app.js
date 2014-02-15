@@ -6,6 +6,7 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var ulsay = require('./routes/ulsay');
 var http = require('http');
 var path = require('path');
 
@@ -36,29 +37,34 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(server);
 
-io.sockets.on('connection', function (socket) {
+var _socket = null;
 
-  socket.on('test', function (data) {
-    socket.emit('test', "zenbu tamefusa no sei da");
+io.sockets.on( 'connection', function( socket ) {
+
+  _socket = socket;
+
+  socket.on( 'test', function( data ) {
+    socket.emit( 'test', { 'data' : 'zenbu tamefusa no sei da' } );
   });
 
-  socket.emit('test', "first emit");
+  socket.emit( 'test', { 'data' : 'first emit' } );
 
 });
 
-/*app.get('/', routes.index);
-app.get('/users', user.list);
-
 // ulsayメイン
-app.get('/ulsay', ulsay.init);
+app.get( '/ulsay', ulsay.init );
 
 // rss情報の取得
-app.get('/fetchRss', ulsay.fetchRss);
+app.get( '/fetchRss', ulsay.fetchRss );
 
 // ローマ字変換したデータをwebsoketで送信
-app.get('/sendSay',  function() {
-
-});*/
+app.get( '/sendSay',  function( req, res ) {
+  if ( _socket !== null ) {
+    socket.emit( 'say', 'ello world' );
+  } else {
+    res.send( 'no connction.' );
+  }
+});
 
 /*
 http.createServer(app).listen(app.get('port'), function(){
