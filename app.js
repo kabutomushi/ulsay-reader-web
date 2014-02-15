@@ -43,14 +43,6 @@ io.sockets.on( 'connection', function( socket ) {
 
   _socket = socket;
 
-  socket.on( 'test', function( data ) {
-    //socket.emit( 'test', { 'data' : 'zenbu tamefusa no sei da' } );
-    //socket.emit( 'test', 2 );
-  });
-
-  //socket.emit( 'test', { 'data' : 'first emit' } );
-  //socket.emit( 'test', 1 );
-
 });
 
 // ulsayメイン

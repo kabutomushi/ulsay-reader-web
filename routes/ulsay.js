@@ -27,9 +27,7 @@ exports.fetchRss = function( req, res ) {
     this.summary = item.summary;
     this.description = item.description.replace(/(<([^>]+)>)|\n/ig, "");
     this.link = item.link;
-    if ( item.image !== '' ) {
-      this.imgUrl = item.image;
-    } else if ( typeof item['rss:image'] !== 'undefined' ) {
+    if ( typeof item['rss:image'] !== 'undefined' ) {
       this.imgUrl = item['rss:image']['#'];
     }
   };
@@ -47,7 +45,6 @@ exports.fetchRss = function( req, res ) {
 
   feedparser.on( 'readable', function() {
 
-    // This is where the action is!
     var stream = this,
       meta = this.meta, // **NOTE** the "meta" is always available in the context of the feedparser instance
       _item;
