@@ -3,8 +3,9 @@
  * GET ulsay listing.
  */
 
-var FeedParser = require('feedparser')
-    , request = require('request');
+var FeedParser = require('feedparser'),
+request = require('request'),
+rss = require('../model/rss.js');
 
 exports.init = function ( req, res ) {
 
@@ -17,11 +18,11 @@ exports.init = function ( req, res ) {
 exports.fetchRss = function( req, res ) {
 
   //var url = 'http://rss.dailynews.yahoo.co.jp/fc/rss.xml',
-  var url = 'http://wired.jp/rssfeeder/',
-  rssreq = request( url ),
-  feedparser = new FeedParser(),
-  item = [],
+  //var url = 'http://wired.jp/rssfeeder/',
+  var urlList = [],
   RSSItem = function( item ) {
+    //console.log(item.title);
+    //console.log(item.description);
     this.title = item.title;
     this.summary = item.summary;
     this.description = item.description.replace(/(<([^>]+)>)|\n/ig, "");
@@ -29,42 +30,72 @@ exports.fetchRss = function( req, res ) {
     if ( typeof item['rss:image'] !== 'undefined' ) {
       this.imgUrl = item['rss:image']['#'];
     }
+  },
+  item = [];
+
+  var _request = function( item, index) {
+
+    request( urlList[ index ], function( err, response, body) {
+        if (!err && response.statusCode == 200) {
+          var json = JSON.parse( require( 'xml2json' ).toJson( body ) ),
+          items = json.rss.channel.item;
+
+          item[index] = [];
+          for ( var i in items ) {
+
+            item[index].push( new RSSItem( items[i] ) );
+
+          }
+        }
+
+        if ( index === 0 ) {
+          res.send(_mix(item));
+        } else {
+          _request( item, index - 1 );
+        }
+
+      });
   };
 
-  rssreq.on('response', function( res ) {
-
-    var stream = this;
-
-    if ( res.statusCode != 200 ) {
-      return this.emit( 'error', new Error( 'Bad status code' ) );
-    }
-
-    stream.pipe( feedparser );
+  rss.getRssUrlList(function( data ) {
+    urlList = data;
+    _request( item, urlList.length - 1 );
   });
 
-  feedparser.on( 'readable', function() {
+  var _mix = function(item) {
+    var rss = [];
+    var sourceNum = item.length;
+    var b = sourceNum;
 
-    var stream = this,
-      meta = this.meta, // **NOTE** the "meta" is always available in the context of the feedparser instance
-      _item;
+    while(1) {
 
-    while ( _item = stream.read() ) {
-      
-      console.log(_item);
-      item.push( new RSSItem( _item ) );
+      // 全てのソースのitemが0になるまで続ける
+      if (b === 0) {
+        console.log('break');
+        break;
+      }
+
+      for (var i = 0; i < sourceNum; i++) {
+
+        var a = item[i].splice( _rand(0, item[i].length), 1 );
+
+        if ( a.length !== 0 ) {
+          rss.push(a);
+        } else {
+          console.log(b);
+          b--;
+        }
+      }  
     }
 
-    stream.end = function() {
-      res.writeHead( 200, {
-        'Content-Type':'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin':'*',
-        'Pragma': 'no-cache',
-        'Cache-Control' : 'no-cache'
-      });
+    console.log(rss);
 
-      res.write( JSON.stringify( item ) );
-      res.end();                  
-    };
-  });
+    return rss;
+
+  };
+
+  var _rand = function(low, high) {
+    return ~~(Math.random() * (high - low) + low);
+  };
 
 };
