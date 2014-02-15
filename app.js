@@ -3,12 +3,13 @@
  * Module dependencies.
  */
 
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var ulsay = require('./routes/ulsay');
-var http = require('http');
-var path = require('path');
+var express = require( 'express' );
+var routes = require('./routes' );
+var user = require('./routes/user' );
+var ulsay = require('./routes/ulsay' );
+var http = require('http' );
+var path = require('path' );
+var exec = require('child_process' ).exec;
 
 var app = express();
 
@@ -35,9 +36,8 @@ var server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
-var io = require('socket.io').listen(server);
-
-var _socket = null;
+var io = require('socket.io').listen(server),
+_socket = null;
 
 io.sockets.on( 'connection', function( socket ) {
 
@@ -61,9 +61,19 @@ app.get( '/fetchRss', ulsay.fetchRss );
 
 // ローマ字変換したデータをwebsoketで送信
 app.get( '/sendSay',  function( req, res ) {
+
   if ( _socket !== null ) {
-    socket.emit( 'say', 'ello world' );
+
+    var cmd = 'letsromaji ' + req.query.word;
+
+    exec( cmd, { timeout: 10000}, function( error, stdout, stderr ) {
+      console.log( stdout );
+      socket.emit( stdout.replace( /\n/ig, '' ), '/dev/null' );
+      res.send( stdout );
+    });
+
   } else {
+    
     res.send( 'no connction.' );
   }
 });
