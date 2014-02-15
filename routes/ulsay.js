@@ -49,7 +49,7 @@ exports.fetchRss = function( req, res ) {
     while ( _item = stream.read() ) {
       
       _item.description = _item.description.replace(/(<([^>]+)>)|\n/ig,"");
-console.log(_item);
+//console.log(_item);
       item.push( new RSSItem( _item ) );
     }
 
@@ -61,7 +61,7 @@ console.log(_item);
         'Cache-Control' : 'no-cache'
       });
 
-      res.write(JSON.stringify(item));
+      res.write( JSON.stringify( item ) );
       res.end();                  
     };
   });
