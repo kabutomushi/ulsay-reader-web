@@ -52,20 +52,20 @@ app.get( '/ulsay', ulsay.init );
 app.get( '/fetchRss', ulsay.fetchRss );
 
 // ローマ字変換したデータをwebsoketで送信
-app.get( '/sendSay',  function( req, res ) {
+app.post( '/sendSay',  function( req, res ) {
 
   if ( _socket !== null ) {
 
-    var cmd = 'letsromaji ' + req.query.word;
+    var cmd = 'letsromaji ' + req.body.word;
 
     exec( cmd, { timeout: 10000}, function( error, stdout, stderr ) {
       console.log( stdout );
-      socket.emit( 'say', stdout.replace( /\n/ig, '' ) );
+      _socket.emit( 'say', stdout.replace( /\n/ig, '' ) );
       res.send( stdout );
     });
 
   } else {
-    
+
     res.send( 'no connction.' );
   }
 });

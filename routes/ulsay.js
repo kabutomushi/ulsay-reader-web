@@ -8,8 +8,7 @@ var FeedParser = require('feedparser')
 
 exports.init = function ( req, res ) {
 
-  res.render( 'init', { title: 'Ulsay' } );
-
+  res.render( 'init', { title: 'Ulsayyy' } );
 }
 
 /**
