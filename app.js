@@ -61,8 +61,13 @@ app.get( '/fetchRss', ulsay.fetchRss );
 
 // ローマ字変換したデータをwebsoketで送信
 app.get( '/sendSay',  function( req, res ) {
+
   if ( _socket !== null ) {
-    socket.emit( 'say', 'ello world' );
+    var cmd = 'letsromaji ' + req.query.word; 
+    exec( cmd, { timeout: 10000}, function( error, stdout, stderr ) {
+      socket.emit( stdout, '/dev/null' );
+    });
+
   } else {
     res.send( 'no connction.' );
   }
