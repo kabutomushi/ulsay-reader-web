@@ -8,6 +8,8 @@
   "dependencies": {
     "express": "3.4.8",
     "ejs": "*",
-    "socket.io": "~0.9.16"
+    "socket.io": "~0.9.16",
+    "feedparser": "~0.16.6",
+    "request": "~2.33.0"
   }
 }

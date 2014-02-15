@@ -3,20 +3,68 @@
  * GET ulsay listing.
  */
 
-exports.init = function( req, res ) {
+var FeedParser = require('feedparser')
+    , request = require('request');
+
+exports.init = function ( req, res ) {
+
   res.render( 'init', { title: 'Ulsay' } );
+
 }
 
+/**
+ * RSSを取得して返す
+ **/
 exports.fetchRss = function( req, res ) {
 
-  var RSS = function() {
-    this.title = '';
+  //var url = 'http://rss.dailynews.yahoo.co.jp/fc/rss.xml',
+  var url = 'http://wired.jp/rssfeeder/',
+  rssreq = request( url ),
+  feedparser = new FeedParser(),
+  item = [],
+  RSSItem = function( item ) {
+    this.title = item.title;
     this.content = '';
     this.description = '';
-    this.thumb ='';
-  }
+    /*if ( item.enclosures[0] ) {
+      this.thumbUrl = item.enclosures[0].url;
+    }*/
+  };
 
-  var rssData = { 'title' : 'test' };
+  rssreq.on('response', function( res ) {
 
-  res.send( rssData );
+    var stream = this;
+
+    if ( res.statusCode != 200 ) {
+      return this.emit( 'error', new Error( 'Bad status code' ) );
+    }
+
+    stream.pipe( feedparser );
+  });
+
+  feedparser.on( 'readable', function() {
+
+    // This is where the action is!
+    var stream = this,
+      meta = this.meta, // **NOTE** the "meta" is always available in the context of the feedparser instance
+      _item;
+
+    while ( _item = stream.read() ) {
+
+      item.push( new RSSItem( _item ) );
+    }
+
+    stream.end = function() {
+      res.writeHead( 200, {
+        'Content-Type':'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin':'*',
+        'Pragma': 'no-cache',
+        'Cache-Control' : 'no-cache'
+      });
+
+      res.write(JSON.stringify(item));
+      res.end();                  
+    };
+  });
+
 };
