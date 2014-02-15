@@ -24,11 +24,8 @@ exports.fetchRss = function( req, res ) {
   item = [],
   RSSItem = function( item ) {
     this.title = item.title;
-    this.content = '';
-    this.description = '';
-    /*if ( item.enclosures[0] ) {
-      this.thumbUrl = item.enclosures[0].url;
-    }*/
+    this.description = item.description;
+    this.imgUrl = item['rss:image']['#'];
   };
 
   rssreq.on('response', function( res ) {
@@ -51,6 +48,9 @@ exports.fetchRss = function( req, res ) {
 
     while ( _item = stream.read() ) {
 
+
+      _item.description = _item.description.replace(/(<([^>]+)>)|\n/ig,"");
+console.log(_item);
       item.push( new RSSItem( _item ) );
     }
 
