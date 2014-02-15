@@ -45,11 +45,11 @@ io.sockets.on( 'connection', function( socket ) {
 
   socket.on( 'test', function( data ) {
     //socket.emit( 'test', { 'data' : 'zenbu tamefusa no sei da' } );
-    socket.emit( 'test', 2 );
+    //socket.emit( 'test', 2 );
   });
 
   //socket.emit( 'test', { 'data' : 'first emit' } );
-  socket.emit( 'test', 1 );
+  //socket.emit( 'test', 1 );
 
 });
 
@@ -68,7 +68,7 @@ app.get( '/sendSay',  function( req, res ) {
 
     exec( cmd, { timeout: 10000}, function( error, stdout, stderr ) {
       console.log( stdout );
-      socket.emit( stdout.replace( /\n/ig, '' ), '/dev/null' );
+      socket.emit( 'say', stdout.replace( /\n/ig, '' ) );
       res.send( stdout );
     });
 

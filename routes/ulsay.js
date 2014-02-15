@@ -24,8 +24,14 @@ exports.fetchRss = function( req, res ) {
   item = [],
   RSSItem = function( item ) {
     this.title = item.title;
-    this.description = item.description;
-    this.imgUrl = item['rss:image']['#'];
+    this.summary = item.summary;
+    this.description = item.description.replace(/(<([^>]+)>)|\n/ig, "");
+    this.link = item.link;
+    if ( item.image !== '' ) {
+      this.imgUrl = item.image;
+    } else if ( typeof item['rss:image'] !== 'undefined' ) {
+      this.imgUrl = item['rss:image']['#'];
+    }
   };
 
   rssreq.on('response', function( res ) {
@@ -48,8 +54,7 @@ exports.fetchRss = function( req, res ) {
 
     while ( _item = stream.read() ) {
       
-      _item.description = _item.description.replace(/(<([^>]+)>)|\n/ig,"");
-//console.log(_item);
+      console.log(_item);
       item.push( new RSSItem( _item ) );
     }
 
