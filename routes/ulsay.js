@@ -76,7 +76,7 @@ exports.fetchRss = function( req, res ) {
         var a = item[i].splice( _rand(0, item[i].length), 1 );
 
         if ( a.length !== 0 ) {
-          rss.push(a);
+          rss.push(a[0]);
         } else {
           b--;
         }
