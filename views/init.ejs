@@ -3,24 +3,42 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" type="text/css" href="/bower/bootstrap/dist/css/bootstrap.min.css" >
     <script type="text/javascript" src="/bower/jquery/dist/jquery.min.js"></script>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p id="test">Welcome to <%= title %></p>
+    <h1>Welcome to <%= title %></h1>
+    <p><%= title %> Debugger</p>
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button id="check" class="btn btn-default" type="button">Go!</button>
+      </span>
+      <form id="form">
+        <input name="word" type="text" class="form-control">
+      </form>
+    </div>
     <script>
     (function() {
-      $('#test').on('click', function() {
+
+      $( '#check' ).on( 'click', function() {
+        var word = $( "#form [name=word]" ).val();
+
         $.ajax({
           type: 'POST',
           url: '/sendSay',
-          data: { word: '全部' }
-        }).done(function(data) {
-          $('#test').text(data);
+          data: { word: word }
+        }).done(function( data ) {
+
+          console.log( data );
+
+        }).fail(function() {
+
+          console.log( 'error' );
         });
       });
 
     })();
     </script>
+    <script type="text/javascript" src="/bower/bootstrap/dist/js/bootstrap.min.js">
   </body>
 </html>

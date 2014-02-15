@@ -58,9 +58,12 @@ app.post( '/sendSay',  function( req, res ) {
 
     var cmd = 'letsromaji ' + req.body.word;
 
-    exec( cmd, { timeout: 10000}, function( error, stdout, stderr ) {
+    exec( cmd, { timeout: 10000 }, function( error, stdout, stderr ) {
+
       console.log( stdout );
+
       _socket.emit( 'say', stdout.replace( /\n/ig, '' ) );
+
       res.send( stdout );
     });
 
