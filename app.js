@@ -65,6 +65,7 @@ app.get( '/sendSay',  function( req, res ) {
   if ( _socket !== null ) {
     var cmd = 'letsromaji ' + req.query.word; 
     exec( cmd, { timeout: 10000}, function( error, stdout, stderr ) {
+      console.log(stdout);
       socket.emit( stdout, '/dev/null' );
     });
 
