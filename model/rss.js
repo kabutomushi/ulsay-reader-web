@@ -17,7 +17,7 @@ module.exports = (function() {
           value = JSON.parse( data );
         }
 
-        if ( value.indexOf( url ) === 0 ) {
+        if ( value.indexOf( url ) !== -1 ) {
           console.log('test');
           res.send( { msg: 'this url is already exists.'} );
         } else {

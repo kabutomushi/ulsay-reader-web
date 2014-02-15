@@ -17,12 +17,8 @@ exports.init = function ( req, res ) {
  **/
 exports.fetchRss = function( req, res ) {
 
-  //var url = 'http://rss.dailynews.yahoo.co.jp/fc/rss.xml',
-  //var url = 'http://wired.jp/rssfeeder/',
   var urlList = [],
   RSSItem = function( item ) {
-    //console.log(item.title);
-    //console.log(item.description);
     this.title = item.title;
     this.summary = item.summary;
     this.description = item.description.replace(/(<([^>]+)>)|\n/ig, "");
@@ -36,6 +32,7 @@ exports.fetchRss = function( req, res ) {
   var _request = function( item, index) {
 
     request( urlList[ index ], function( err, response, body) {
+      console.log(err);
         if (!err && response.statusCode == 200) {
           var json = JSON.parse( require( 'xml2json' ).toJson( body ) ),
           items = json.rss.channel.item;
@@ -71,7 +68,6 @@ exports.fetchRss = function( req, res ) {
 
       // 全てのソースのitemが0になるまで続ける
       if (b === 0) {
-        console.log('break');
         break;
       }
 
@@ -82,13 +78,10 @@ exports.fetchRss = function( req, res ) {
         if ( a.length !== 0 ) {
           rss.push(a);
         } else {
-          console.log(b);
           b--;
         }
       }  
     }
-
-    console.log(rss);
 
     return rss;
 
