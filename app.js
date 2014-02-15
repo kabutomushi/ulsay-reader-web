@@ -30,9 +30,34 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
+var server = http.createServer(app).listen(app.get('port'), function(){
+  console.log("Express server listening on port " + app.get('port'));
+});
+
+var io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function (socket) {
+
+  //socket.on('server', function (data) {
+    socket.emit('test', "zenbu tamefusa no sei da");
+  //});
+});
+
+/*app.get('/', routes.index);
 app.get('/users', user.list);
 
+// ulsayメイン
+app.get('/ulsay', )
+
+// rss情報の取得
+app.get('/fetchRss', );
+
+// ローマ字変換したデータをwebsoketで送信
+app.get('/sendSay',  function() {
+
+});*/
+
+/*
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
-});
+});*/
