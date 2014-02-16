@@ -3,9 +3,9 @@
  * GET ulsay listing.
  */
 
-var FeedParser = require('feedparser'),
-request = require('request'),
-rss = require('../model/rss.js');
+var FeedParser = require( 'feedparser' ),
+request = require( 'request' ),
+rss = require( '../model/rss.js' );
 
 exports.init = function ( req, res ) {
 
@@ -29,7 +29,7 @@ exports.fetchRss = function( req, res ) {
   },
   item = [];
 
-  var _request = function( item, index) {
+  var _request = function( item, index ) {
 
     request( urlList[ index ], function( err, response, body) {
 
@@ -40,7 +40,7 @@ exports.fetchRss = function( req, res ) {
           item[index] = [];
           for ( var i in items ) {
 
-            if ( items[i].title.match(/[A-Za-z]/gi) ) {
+            if ( items[i].title.match( /[A-Za-z]/gi ) ) {
               console.log('skip');
               continue;
             }
@@ -51,7 +51,7 @@ exports.fetchRss = function( req, res ) {
         }
 
         if ( index === 0 ) {
-          res.send(_mix(item));
+          res.send(_mix( item ) );
         } else {
           _request( item, index - 1 );
         }
@@ -59,29 +59,29 @@ exports.fetchRss = function( req, res ) {
       });
   };
 
-  rss.getRssUrlList(function( data ) {
+  rss.getRssUrlList( function( data ) {
     urlList = data;
     _request( item, urlList.length - 1 );
   });
 
-  var _mix = function(item) {
-    var rss = [];
-    var sourceNum = item.length;
-    var b = sourceNum;
+  var _mix = function( item ) {
+    var rss = [],
+    sourceNum = item.length,
+    b = sourceNum;
 
-    while(1) {
+    while( 1 ) {
 
       // 全てのソースのitemが0になるまで続ける
-      if (b === 0) {
+      if (b <= 0) {
         break;
       }
 
-      for (var i = 0; i < sourceNum; i++) {
+      for ( var i = 0; i < sourceNum; i++ ) {
 
-        var a = item[i].splice( _rand(0, item[i].length), 1 );
+        var a = item[i].splice( _rand( 0, item[i].length ), 1 );
 
         if ( a.length !== 0 ) {
-          rss.push(a[0]);
+          rss.push( a[0] );
         } else {
           b--;
         }
@@ -92,8 +92,8 @@ exports.fetchRss = function( req, res ) {
 
   };
 
-  var _rand = function(low, high) {
-    return ~~(Math.random() * (high - low) + low);
+  var _rand = function( low, high ) {
+    return ~~( Math.random() * ( high - low ) + low );
   };
 
 };
