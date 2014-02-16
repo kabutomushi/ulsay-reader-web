@@ -32,13 +32,18 @@ exports.fetchRss = function( req, res ) {
   var _request = function( item, index) {
 
     request( urlList[ index ], function( err, response, body) {
-      console.log(err);
+
         if (!err && response.statusCode == 200) {
           var json = JSON.parse( require( 'xml2json' ).toJson( body ) ),
           items = json.rss.channel.item;
 
           item[index] = [];
           for ( var i in items ) {
+
+            if ( items[i].title.match(/[A-Za-z]/gi) ) {
+              console.log('skip');
+              continue;
+            }
 
             item[index].push( new RSSItem( items[i] ) );
 
