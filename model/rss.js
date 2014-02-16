@@ -18,7 +18,6 @@ module.exports = (function() {
         }
 
         if ( value.indexOf( url ) !== -1 ) {
-          console.log('test');
           res.send( { msg: 'this url is already exists.'} );
         } else {
 

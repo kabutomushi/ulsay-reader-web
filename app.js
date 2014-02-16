@@ -69,10 +69,8 @@ app.get( '/removeRss', function( req, res ) {
 // rssソースのリストを取得
 app.get('/fetchList', function( req, res ) {
 
-  console.log('fetch list');
-
   rss.getRssUrlList(function(data) {
-    console.log(data);
+
     res.send(data);
   });
 
